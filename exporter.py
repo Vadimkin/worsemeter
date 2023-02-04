@@ -29,7 +29,7 @@ def get_stat_until(datetime_until) -> tuple[int, int]:
 
 def export():
     current_time = datetime.datetime.now().replace(
-        hour=0, minute=0, second=0, microsecond=0
+        minute=0, second=0, microsecond=0
     )
 
     analytics_by_date = {}

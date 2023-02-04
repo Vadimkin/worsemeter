@@ -1,3 +1,5 @@
+__pycache__
+
 static/tweets.json
 config.py
 database.db
