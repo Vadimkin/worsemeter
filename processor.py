@@ -8,6 +8,27 @@ import models
 
 logger = logging.getLogger(__name__)
 
+search_strings = {
+    "стало краще",
+    "стало гірше",
+    "накрутився",
+    "накрутилась",
+    "накрутились",
+    "розкрут",
+    "розкрутився",
+    "розкрутіться",
+    "розкрутилась",
+    "розкрутились",
+    "розкруту",
+}
+
+lookup_string_to_nakrut = {
+    "краще": False,
+    "розкрут": False,
+    "гірше": True,
+    "накрут": True,
+}
+
 
 def max_tweet_id() -> Optional[str]:
     tweet = (
@@ -33,8 +54,17 @@ def process_tweet(tweet: tweepy.Tweet):
         return
 
     # It's possible to have them both as true
-    is_worse = "гірше" in tweet.text
-    is_better = "краще" in tweet.text
+    is_worse = False
+    is_better = False
+
+    for k, is_nakrut_tweet in lookup_string_to_nakrut.items():
+        if k not in tweet.text.lower():
+            continue
+
+        if is_nakrut_tweet and not is_worse:
+            is_worse = True
+        if not is_nakrut_tweet and not is_better:
+            is_better = True
 
     models.Tweet.create(
         tweet_id=tweet_id_str,
@@ -48,9 +78,9 @@ def process_tweet(tweet: tweepy.Tweet):
 
 def process_initial_tweets(client):
     print("Processing initial data...")
-    # parse latest 500 results
+    # Parse latest 1000 results
     max_tweet_id = None
-    for i in range(5):
+    for i in range(10):
         response = process_tweets(client, until_id=max_tweet_id)
         if not response.data:
             break
@@ -62,8 +92,11 @@ def process_initial_tweets(client):
 def process_tweets(
     client, since_id: Optional[str] = None, until_id: Optional[str] = None
 ):
+    # '("стало гірше") OR ("стало краще")'
+    search_str = "(" + ") OR (".join(search_strings) + ")"
+
     response = client.search_recent_tweets(
-        '("стало гірше") OR ("стало краще")',
+        search_str,
         user_auth=True,
         tweet_fields=["created_at"],
         since_id=since_id,
