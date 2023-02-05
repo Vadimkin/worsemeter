@@ -6,7 +6,7 @@ from models import Tweet
 
 
 def get_stat_until(datetime_until) -> tuple[int, int]:
-    hour_from = datetime_until - datetime.timedelta(hours=10)
+    hour_from = datetime_until - datetime.timedelta(hours=6)
     tweets = Tweet.select().where(
         (Tweet.created_at > hour_from)
         & (Tweet.created_at < datetime_until)
@@ -47,6 +47,7 @@ def export():
         better_percentage = round(is_better * 100 / count)
 
         hour_str = previous_hour.isoformat()
+        print(hour_str, better_percentage, worse_percentage)
         analytics_by_date[hour_str] = (worse_percentage, better_percentage)
 
     with open(config.ANALYTICS_FILE, "w") as analytics_file:
