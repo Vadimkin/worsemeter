@@ -24,7 +24,7 @@ def get_stat_until(datetime_until) -> tuple[int, int]:
 
         coeficient = 1
         if is_retweet:
-            coeficient = 0.25
+            coeficient = 0.20
 
         if tweet.is_worse:
             is_worse += coeficient
