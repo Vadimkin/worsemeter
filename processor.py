@@ -93,7 +93,8 @@ def process_tweets(
     client, since_id: Optional[str] = None, until_id: Optional[str] = None
 ):
     # '("стало гірше") OR ("стало краще")'
-    search_str = "(" + ") OR (".join(search_strings) + ")"
+    # Remove retweets
+    search_str = "(" + ") OR (".join(search_strings) + ") -is:retweet"
 
     response = client.search_recent_tweets(
         search_str,
