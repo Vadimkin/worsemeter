@@ -20,10 +20,16 @@ def get_stat_until(datetime_until) -> tuple[int, int]:
 
     # TODO Optimize it into sql query someday
     for tweet in tweets:
+        is_retweet = tweet.text.startswith("RT @")
+
+        coeficient = 1
+        if is_retweet:
+            coeficient = 0.25
+
         if tweet.is_worse:
-            is_worse += 1
+            is_worse += coeficient
         if tweet.is_better:
-            is_better += 1
+            is_better += coeficient
     return is_worse, is_better
 
 
